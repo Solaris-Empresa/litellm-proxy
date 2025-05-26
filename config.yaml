@@ -8,11 +8,8 @@ model_list:
     litellm_params:
       model: gpt-4
       api_key: ${OPENAI_API_KEY}
-
-general_settings:
-  proxy_assistant_api: true
-  port: ${PORT:-7860}
-  host: 0.0.0.0
-
-environment_variables:
-  OPENAI_API_KEY: ${OPENAI_API_KEY}
+      
+  - model_name: gpt-4.5-preview
+    litellm_params:
+      model: gpt-4.5-preview
+      api_key: ${OPENAI_API_KEY}
