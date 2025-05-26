@@ -8,8 +8,5 @@ RUN pip install --no-cache-dir openai==0.28.1 litellm==0.11.0 uvicorn==0.23.2 py
 # Copiar arquivos
 COPY . /app
 
-# Expor porta
-EXPOSE 7860
-
 # Comando para iniciar o proxy
-CMD ["python", "-m", "litellm", "--config", "config.yaml", "--port", "$PORT", "--host", "0.0.0.0"]
+CMD python -m litellm --config config.yaml --port ${PORT:-7860} --host 0.0.0.0
