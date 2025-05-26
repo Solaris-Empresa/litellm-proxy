@@ -3,7 +3,7 @@ model_list:
     litellm_params:
       model: gpt-3.5-turbo
       api_key: ${OPENAI_API_KEY}
-
+  
   - model_name: gpt-4
     litellm_params:
       model: gpt-4
@@ -11,7 +11,7 @@ model_list:
 
 general_settings:
   proxy_assistant_api: true
-  port: ${PORT}
+  port: ${PORT:-7860}
   host: 0.0.0.0
 
 environment_variables:
