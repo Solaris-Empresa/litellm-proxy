@@ -25,6 +25,3 @@ COPY . /app
 
 # Comando para iniciar o proxy
 CMD python -m litellm --config config.yaml --port ${PORT:-7860} --host 0.0.0.0
-
-
-
