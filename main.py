@@ -58,6 +58,10 @@ def call_fastapi_rag(consulta):
     except Exception as e:
         return {"error": f"Erro ao chamar RAG: {str(e)}"}
 
+@main_app.get("/health")
+def health_check():
+    return JSONResponse({"status": "ok"}, status_code=200)
+
 # Mount LiteLLM's proxy for all other endpoints
 main_app.mount("/", litellm_app)
 
