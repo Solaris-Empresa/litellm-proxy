@@ -2,7 +2,7 @@
 # litellm_proxy_custom.py - Proxy customizado para interceptar tool calls
 import json
 import requests
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, Response
 import openai
 from litellm import completion
 import os
@@ -109,6 +109,28 @@ def assistant_detail(assistant_id):
     elif request.method == 'DELETE':
         resp = requests.delete(f"{OPENAI_BASE_URL}/assistants/{assistant_id}", headers=headers)
         return (resp.content, resp.status_code, resp.headers.items())
+
+@app.route('/v1/<path:path>', methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+def proxy_openai(path):
+    # Do not proxy /v1/chat/completions (custom logic)
+    if path == "chat/completions":
+        abort(404)
+    method = request.method
+    url = f"{OPENAI_BASE_URL}/{path}"
+    headers = dict(request.headers)
+    headers["Authorization"] = f"Bearer {OPENAI_API_KEY}"
+    headers["Host"] = "api.openai.com"
+    # Remove headers that should not be forwarded
+    headers.pop("Content-Length", None)
+    headers.pop("Transfer-Encoding", None)
+    # Forward query params
+    params = request.args.to_dict()
+    # Forward body if present
+    data = request.get_data() if request.data else None
+    resp = requests.request(method, url, headers=headers, params=params, data=data, stream=True)
+    excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
+    response_headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+    return Response(resp.content, resp.status_code, response_headers)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
