@@ -73,5 +73,10 @@ def call_fastapi_rag(consulta):
     except Exception as e:
         return {"error": f"Erro ao chamar RAG: {str(e)}"}
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint for monitoring."""
+    return jsonify({"status": "ok"}), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
